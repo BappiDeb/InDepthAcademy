@@ -472,6 +472,8 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 29DX4LFAXR;
 				ENABLE_BITCODE = NO;
+				FLUTTER_BUILD_NAME = 1.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = InDepthAcademy;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -479,7 +481,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.learnindepth;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -663,14 +665,16 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 29DX4LFAXR;
 				ENABLE_BITCODE = NO;
+				FLUTTER_BUILD_NAME = 1.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = LearnInDepth;
+				INFOPLIST_KEY_CFBundleDisplayName = InDepthAcademy;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.learnindepth;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -693,14 +697,16 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 29DX4LFAXR;
 				ENABLE_BITCODE = NO;
+				FLUTTER_BUILD_NAME = 1.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = indepthacademy;
+				INFOPLIST_KEY_CFBundleDisplayName = InDepthAcademy;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.indepthacademy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keroles.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

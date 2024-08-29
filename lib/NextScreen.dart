@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:indepthacademy/LoginScreen.dart';
+import 'package:in_depth_academy/LoginScreen.dart';
 import 'package:flutter/services.dart';
 import 'package:no_screenshot/no_screenshot.dart';
 
 class NextScreen extends StatefulWidget {
-  final String returnUrl;
-  NextScreen({required this.returnUrl});
-
   @override
   _NextScreenState createState() => _NextScreenState();
 }
@@ -105,7 +102,8 @@ class _NextScreenState extends State<NextScreen>
               Expanded(
                 child: InAppWebView(
                   initialUrlRequest: URLRequest(
-                    url: WebUri(widget.returnUrl), //widget.returnUrl
+                    url: WebUri(
+                        'https://www.in-depth-academy.com/student-yarapatmaged'),
                   ),
                   initialOptions: InAppWebViewGroupOptions(
                     crossPlatform: InAppWebViewOptions(
@@ -146,7 +144,7 @@ class _NextScreenState extends State<NextScreen>
       // Check if custom controls have already been injected
       if (video.getAttribute('data-custom-controls-injected') === 'true') return;
 
-      // Create custom controls
+      // Create custom controls container
       var customControls = document.createElement('div');
       customControls.id = 'custom-controls';
       customControls.style.position = 'absolute';
@@ -157,84 +155,121 @@ class _NextScreenState extends State<NextScreen>
       customControls.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
       customControls.style.padding = '10px';
       customControls.style.borderRadius = '5px';
-      customControls.style.display = 'none'; // Initially hidden
-      customControls.style.textAlign = 'center'; // Center align controls
-      customControls.style.boxSizing = 'border-box'; // Include padding and border in element's total width and height
+      customControls.style.display = 'flex';
+      customControls.style.alignItems = 'center';
+      customControls.style.boxSizing = 'border-box';
 
-      customControls.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-          <button id="play-button" onclick="playVideo()" style="font-size: 24px;">&#9658;</button> <!-- Play Icon -->
-          <button id="pause-button" onclick="pauseVideo()" style="font-size: 24px; display: none;">&#10074;&#10074;</button> <!-- Pause Icon -->
-          <button onclick="toggleMute()" style="font-size: 24px;">&#128263;</button> <!-- Mute Icon -->
-          <input type="range" id="seek-bar" value="0" style="flex-grow: 1; margin: 0 10px; width: auto;">
-          <span id="current-time">0:00</span>
-        </div>
-      `;
+      // Create play/pause button container
+      var centerControls = document.createElement('div');
+      centerControls.style.position = 'absolute';
+      centerControls.style.top = '50%';
+      centerControls.style.left = '50%';
+      centerControls.style.transform = 'translate(-50%, -50%)';
+      centerControls.style.zIndex = '10001'; // Ensure it is above the video
+      centerControls.style.display = 'flex';
+      centerControls.style.alignItems = 'center';
+      centerControls.style.justifyContent = 'center';
 
+      // Create Play and Pause buttons
+      var playButton = document.createElement('button');
+      playButton.id = 'play-button';
+      playButton.innerHTML = '&#9658;'; // Play icon
+      playButton.style.fontSize = '48px'; // Adjust size for visibility
+      playButton.style.color = 'white';
+      playButton.style.backgroundColor = 'transparent';
+      playButton.style.border = 'none';
+      playButton.style.outline = 'none';
+      playButton.style.cursor = 'pointer';
+
+      var pauseButton = document.createElement('button');
+      pauseButton.id = 'pause-button';
+      pauseButton.innerHTML = '&#10074;&#10074;'; // Pause icon
+      pauseButton.style.fontSize = '48px'; // Same size as play button
+      pauseButton.style.color = 'white';
+      pauseButton.style.backgroundColor = 'transparent';
+      pauseButton.style.border = 'none';
+      pauseButton.style.outline = 'none';
+      pauseButton.style.cursor = 'pointer';
+      pauseButton.style.display = 'none'; // Initially hidden
+
+      // Append buttons to the center controls container
+      centerControls.appendChild(playButton);
+      centerControls.appendChild(pauseButton);
+
+      // Append center controls and other controls to the video container
+      video.parentElement.style.position = 'relative'; // Ensure the parent is positioned
+      video.parentElement.appendChild(centerControls);
       video.parentElement.appendChild(customControls);
 
       // Custom control functions
-      window.playVideo = function() {
+      var seekBar = document.createElement('input');
+      seekBar.type = 'range';
+      seekBar.id = 'seek-bar';
+      seekBar.value = '0';
+      seekBar.style.flexGrow = '1';
+      seekBar.style.margin = '0 10px';
+      customControls.appendChild(seekBar);
+
+      var currentTime = document.createElement('span');
+      currentTime.id = 'current-time';
+      currentTime.style.color = 'white';
+      currentTime.textContent = '0:00';
+      customControls.appendChild(currentTime);
+
+      playButton.addEventListener('click', function() {
         video.play();
-        customControls.style.display = 'none'; // Hide controls when video starts playing
-        document.getElementById('play-button').style.display = 'none'; // Hide play button
-        document.getElementById('pause-button').style.display = 'block'; // Show pause button
-      }
+        playButton.style.display = 'none';
+        pauseButton.style.display = 'block';
+        customControls.style.display = 'flex'; // Show the seek bar
+        resetHideControlsTimer(); // Reset timer on interaction
+      });
 
-      window.pauseVideo = function() {
+      pauseButton.addEventListener('click', function() {
         video.pause();
-        document.getElementById('play-button').style.display = 'block'; // Show play button
-        document.getElementById('pause-button').style.display = 'none'; // Hide pause button
-      }
-
-      window.toggleMute = function() {
-        video.muted = !video.muted;
-      }
-
-      // Update seek bar and time display
-      var seekBar = customControls.querySelector('#seek-bar');
-      var currentTime = customControls.querySelector('#current-time');
+        playButton.style.display = 'block';
+        pauseButton.style.display = 'none';
+        customControls.style.display = 'flex'; // Show the seek bar
+        resetHideControlsTimer(); // Reset timer on interaction
+      });
 
       video.addEventListener('timeupdate', function() {
         var duration = video.duration || 0;
         var currentTimeValue = video.currentTime || 0;
         var value = (currentTimeValue / duration) * 100;
-
         seekBar.value = value;
 
         var minutes = Math.floor(currentTimeValue / 60);
         var seconds = Math.floor(currentTimeValue % 60);
-      
+        currentTime.textContent = minutes + ':' + (seconds < 10 ? '0' + seconds : seconds);
       });
 
       seekBar.addEventListener('input', function() {
         var value = seekBar.value * video.duration / 100;
         video.currentTime = value;
+        resetHideControlsTimer(); // Reset timer on interaction
       });
 
       // Set flag to prevent duplicate control injection
       video.setAttribute('data-custom-controls-injected', 'true');
 
-      // Show play button when video is paused or not started
+      // Show controls when paused
       video.addEventListener('pause', function() {
-        customControls.style.display = 'block';
-        document.getElementById('play-button').style.display = 'block';
-        document.getElementById('pause-button').style.display = 'none';
+        centerControls.style.display = 'flex';
+        customControls.style.display = 'flex'; // Show the seek bar
+        resetHideControlsTimer(); // Reset timer on interaction
       });
 
-      // Hide play button when video is playing
+      // Show controls on play
       video.addEventListener('play', function() {
-        customControls.style.display = 'none';
-        document.getElementById('play-button').style.display = 'none';
-        document.getElementById('pause-button').style.display = 'block';
+        centerControls.style.display = 'flex';
+        customControls.style.display = 'flex'; // Show the seek bar
+        resetHideControlsTimer(); // Reset timer on interaction
       });
 
-      // Auto-play video (remove or comment this line if not needed)
-      video.play();
-
-      // Show controls on touch or click
+      // Show controls on video click
       video.addEventListener('click', function() {
-        customControls.style.display = 'block';
+        centerControls.style.display = 'flex';
+        customControls.style.display = 'flex'; // Show the seek bar
         resetHideControlsTimer();
       });
 
@@ -243,8 +278,9 @@ class _NextScreenState extends State<NextScreen>
       function resetHideControlsTimer() {
         clearTimeout(hideControlsTimer);
         hideControlsTimer = setTimeout(function() {
+          centerControls.style.display = 'none';
           customControls.style.display = 'none';
-        }, 1500); // Hide after 3 seconds of inactivity
+        }, 1500); // Hide after 1.5 seconds of inactivity
       }
 
       // Reset timer when interacting with controls or touching/moving the document
@@ -268,8 +304,9 @@ class _NextScreenState extends State<NextScreen>
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
-
 })();
+
+
 
 
 """);
@@ -300,29 +337,6 @@ class _NextScreenState extends State<NextScreen>
         : AppBar(
             title: Text(_userEmail),
             actions: [
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () async {
-                  if (_webViewController != null) {
-                    final currentUrl = await _webViewController?.getUrl();
-                    if (currentUrl.toString() == widget.returnUrl) {
-                      return;
-                    }
-                    if (await _webViewController!.canGoBack()) {
-                      _webViewController!.goBack();
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () {
-                  _webViewController?.loadUrl(
-                      urlRequest: URLRequest(url: WebUri(widget.returnUrl)));
-                },
-              ),
               IconButton(
                 icon: Icon(Icons.logout),
                 onPressed: () async {
